@@ -560,7 +560,10 @@
     // Click-to-enter gate: the click counts as the visitor's interaction, so the browser lets the music play
     const gate = document.getElementById("gate"), enter = document.getElementById("enter");
     enter.addEventListener("click", () => {
-      if (wantOn) start();
+      wantOn = true; set("azure-music", "on");
+      if (au.muted) { au.muted = false; set("azure-muted", "0"); }
+      if (au.volume === 0) { au.volume = .35; vol.value = 35; set("azure-vol", "35"); }
+      start();
       gate.classList.add("done");
       document.documentElement.classList.remove("gated");
       setTimeout(() => gate.remove(), 700);
