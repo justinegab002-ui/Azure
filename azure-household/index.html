@@ -94,16 +94,82 @@
   .top:hover{border-color:var(--azure)}
   footer{text-align:center;color:var(--mute);font-size:.85rem;padding:48px 24px 64px}
 
+  /* Loading screen */
+  .loader{display:none}
+  .js .loader{display:grid;place-items:center;align-content:center;gap:22px;position:fixed;inset:0;z-index:100;background:var(--bg);
+    transition:opacity .6s ease,visibility .6s}
+  .loader.done{opacity:0;visibility:hidden;pointer-events:none}
+  .loader img{width:140px;height:140px;border-radius:50%;box-shadow:0 0 70px rgba(39,168,255,.55);animation:ldin 1s ease-out both,ldglow 2s ease-in-out 1s infinite}
+  .loader .bar{width:160px;height:3px;border-radius:3px;background:var(--line);overflow:hidden}
+  .loader .bar i{display:block;height:100%;width:40%;background:var(--azure);box-shadow:0 0 10px var(--azure);animation:ldbar 1.1s ease-in-out infinite}
+  @keyframes ldin{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+  @keyframes ldglow{50%{box-shadow:0 0 100px rgba(39,168,255,.85)}}
+  @keyframes ldbar{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
+
+  /* Frost particles */
+  #frost{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+
+  /* Stats band */
+  .stats{display:flex;justify-content:center;flex-wrap:wrap;gap:14px 56px;padding:36px 24px;border-block:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(9,21,42,.7),rgba(3,10,23,.4))}
+  .stats div{text-align:center;min-width:110px}
+  .stats b{display:block;font-family:var(--display);font-size:clamp(2rem,6vw,3rem);line-height:1.1;color:var(--azure);text-shadow:0 0 22px rgba(39,168,255,.55)}
+  .stats span{color:var(--mute);font-weight:700;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase}
+
+  /* Cursor-following glow on cards */
+  .card,.city,.ally{position:relative}
+  .card::after,.city::after,.ally::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;
+    background:radial-gradient(260px circle at var(--gx,50%) var(--gy,50%),rgba(80,200,255,.22),transparent 65%)}
+  .card:hover::after,.city:hover::after,.ally:hover::after{opacity:1}
+
+  /* Presence */
+  .av{position:relative;width:52px;height:52px;margin-top:-26px}
+  .av .avatar{margin-top:0}
+  .dot{position:absolute;right:-3px;bottom:-1px;width:16px;height:16px;border-radius:50%;border:3px solid var(--card);background:#747f8d}
+  .dot.online{background:#3ba55d;box-shadow:0 0 8px #3ba55d}
+  .dot.idle{background:#faa81a}
+  .dot.dnd{background:#ed4245}
+  .act{color:var(--azure);font-size:.8rem;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .act:empty{display:none}
+
+  /* Paw trail */
+  .paw{position:fixed;z-index:50;width:18px;height:18px;pointer-events:none;opacity:.7;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2327a8ff'%3E%3Cellipse cx='12' cy='16' rx='5.5' ry='4.5'/%3E%3Ccircle cx='5' cy='10.5' r='2.3'/%3E%3Ccircle cx='9.5' cy='5.8' r='2.4'/%3E%3Ccircle cx='14.5' cy='5.8' r='2.4'/%3E%3Ccircle cx='19' cy='10.5' r='2.3'/%3E%3C/svg%3E") center/contain no-repeat;
+    filter:drop-shadow(0 0 4px rgba(39,168,255,.8));animation:pawfade 1.3s ease-out forwards}
+  @keyframes pawfade{to{opacity:0;transform:var(--r) scale(.7)}}
+
+  /* Aurora + mist */
+  .aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+  .aurora i{position:absolute;left:-20%;width:140%;height:46vh;filter:blur(70px);opacity:.5;border-radius:50%;will-change:transform;mix-blend-mode:screen}
+  .aurora i:nth-child(1){top:-6vh;background:linear-gradient(90deg,transparent,rgba(39,168,255,.55),rgba(60,230,200,.5),transparent);animation:aur1 18s ease-in-out infinite alternate}
+  .aurora i:nth-child(2){top:8vh;height:36vh;background:linear-gradient(90deg,transparent,rgba(120,90,255,.4),rgba(39,168,255,.5),transparent);animation:aur2 24s ease-in-out infinite alternate}
+  .aurora i:nth-child(3){top:20vh;height:30vh;opacity:.32;background:linear-gradient(90deg,transparent,rgba(70,240,190,.45),rgba(39,168,255,.35),transparent);animation:aur3 30s ease-in-out infinite alternate}
+  @keyframes aur1{from{transform:translateX(-8%) skewX(-8deg) scaleY(.9)}to{transform:translateX(10%) skewX(8deg) scaleY(1.2)}}
+  @keyframes aur2{from{transform:translateX(9%) skewX(10deg) scaleY(1.1)}to{transform:translateX(-10%) skewX(-6deg) scaleY(.85)}}
+  @keyframes aur3{from{transform:translateX(-6%) scaleY(.8)}to{transform:translateX(7%) scaleY(1.25)}}
+  .mist{position:fixed;left:0;right:0;bottom:0;height:38vh;z-index:5;pointer-events:none;overflow:hidden;
+    -webkit-mask-image:linear-gradient(to top,#000 20%,transparent);mask-image:linear-gradient(to top,#000 20%,transparent)}
+  .mist i{position:absolute;bottom:-12vh;left:-30%;width:160%;height:30vh;border-radius:50%;filter:blur(40px);opacity:.16;will-change:transform;
+    background:radial-gradient(ellipse at 30% 60%,#bfe6ff,transparent 60%),radial-gradient(ellipse at 75% 50%,#8fd0ff,transparent 55%)}
+  .mist i:nth-child(1){animation:mist1 40s linear infinite alternate}
+  .mist i:nth-child(2){bottom:-16vh;opacity:.12;animation:mist2 55s linear infinite alternate}
+  @keyframes mist1{from{transform:translateX(-12%)}to{transform:translateX(12%)}}
+  @keyframes mist2{from{transform:translateX(14%) scaleY(1.2)}to{transform:translateX(-14%) scaleY(.9)}}
+
   @media (prefers-reduced-motion:reduce){
-    html{scroll-behavior:auto}
     .logo{transition:none}
     .stage.pulse .logo{animation:none}
     .js .rv{opacity:1;translate:none}
+    .loader img,.loader .bar i{animation:none}
   }
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
+<div class="loader" id="loader" aria-hidden="true"><img src="logo.jpg" alt=""><div class="bar"><i></i></div></div>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<canvas id="frost" aria-hidden="true"></canvas>
+<div class="mist" aria-hidden="true"><i></i><i></i></div>
 <nav class="nav" aria-label="Main">
   <a class="brand" href="#home"><img src="logo.jpg" alt=""><span>Azure<span class="hh"> Household</span></span></a>
   <div class="links">
@@ -124,6 +190,12 @@
   <p>We take great pride in the bonds we have built, in the cities in which we play, and in the allied families who stand beside us. In times of challenge and in times of celebration alike, we remain steadfast in our loyalty, and we welcome all who share these values.</p>
   <a class="cta" href="#members">Meet the members</a>
 </header>
+
+<section class="stats" id="stats" aria-label="Azure at a glance">
+  <div><b data-k="members">0</b><span>Members</span></div>
+  <div><b data-k="cities">0</b><span>Cities</span></div>
+  <div><b data-k="allies">0</b><span>Allies</span></div>
+</section>
 
 <main id="members">
   <h2 class="title" style="color:var(--ice)">Members</h2>
@@ -197,6 +269,35 @@
     links.forEach((l) => l.classList.toggle("active", l.dataset.s === cur));
   }
   links.forEach((l) => l.addEventListener("click", () => { pin = l.dataset.s; setActive(); }));
+
+  // Smooth scroll for every in-page link (nav, logo, "Meet the members").
+  // Animated in JS so it glides even when the OS has animations turned off.
+  let raf = 0;
+  function glideTo(targetY) {
+    cancelAnimationFrame(raf);
+    const startY = scrollY, dist = targetY - startY;
+    const dur = Math.min(1100, 450 + Math.abs(dist) * 0.35);
+    const t0 = performance.now();
+    const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const stop = () => cancelAnimationFrame(raf);
+    ["wheel", "touchstart"].forEach((ev) => addEventListener(ev, stop, { passive: true, once: true }));
+    (function step(now) {
+      const t = Math.min(1, (now - t0) / dur);
+      scrollTo(0, startY + dist * ease(t));
+      if (t < 1) raf = requestAnimationFrame(step);
+    })(t0);
+  }
+  document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener("click", (e) => {
+    const id = a.getAttribute("href").slice(1);
+    const el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const y = id === "home" ? 0 : Math.min(max, el.getBoundingClientRect().top + scrollY - 64);
+    document.documentElement.style.scrollBehavior = "auto"; // avoid fighting the CSS smoothing
+    glideTo(y);
+    history.replaceState(null, "", "#" + id);
+  }));
   ["wheel", "touchmove", "keydown"].forEach((ev) => addEventListener(ev, () => { pin = null; }, { passive: true }));
 
   // Cities (icons live in the cities/ folder)
@@ -242,7 +343,7 @@
       const a = document.createElement("a");
       a.className = "card"; a.href = "https://discord.com/users/" + id;
       a.target = "_blank"; a.rel = "noopener";
-      a.innerHTML = '<div class="banner"></div><div class="body"><img class="avatar" alt="" hidden><div class="name">Loading…</div><div class="handle">&nbsp;</div></div>';
+      a.innerHTML = '<div class="banner"></div><div class="body"><div class="av"><img class="avatar" alt="" hidden><i class="dot" hidden></i></div><div class="name">Loading…</div><div class="handle">&nbsp;</div><div class="act"></div></div>';
       grid.appendChild(a); cards[id] = a;
     });
     sec.append(h, grid); root.appendChild(sec);
@@ -257,7 +358,7 @@
     setActive();
   };
   addEventListener("scroll", onScroll, { passive: true }); onScroll();
-  topBtn.addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }));
+  topBtn.addEventListener("click", () => glideTo(0));
 
   const tiles = document.querySelectorAll(".card,.city,.ally");
   const rio = new IntersectionObserver((es) => {
@@ -296,6 +397,123 @@
     .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((d) => d.users.forEach(fill))
     .catch(() => all.forEach((id) => fill({ id, error: true })));
+
+  // ===== Extras: loader, frost, counters, glow, presence, paws =====
+
+  // Loading screen: logo fades in, then lifts once the page has loaded
+  const loader = document.getElementById("loader");
+  const hideLoader = () => loader.classList.add("done");
+  addEventListener("load", () => setTimeout(hideLoader, Math.max(0, 1100 - performance.now())));
+  setTimeout(hideLoader, 3500); // never get stuck
+
+  // Stats counters
+  document.querySelector('[data-k="members"]').dataset.n = Object.keys(cards).length;
+  document.querySelector('[data-k="cities"]').dataset.n = CITIES.length;
+  document.querySelector('[data-k="allies"]').dataset.n = ALLIES.length;
+  const sio = new IntersectionObserver((es) => es.forEach((en) => {
+    if (!en.isIntersecting) return;
+    sio.disconnect();
+    document.querySelectorAll(".stats b").forEach((b) => {
+      const n = +b.dataset.n; if (reduce) { b.textContent = n; return; }
+      const t0 = performance.now(), dur = 1400;
+      (function tick(now) {
+        const t = Math.min(1, (now - t0) / dur);
+        b.textContent = Math.round(n * (1 - Math.pow(1 - t, 3)));
+        if (t < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }), { threshold: .4 });
+  sio.observe(document.getElementById("stats"));
+
+  // Glow that follows the cursor on cards
+  tiles.forEach((el) => el.addEventListener("pointermove", (e) => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--gx", (e.clientX - r.left) + "px"); el.style.setProperty("--gy", (e.clientY - r.top) + "px");
+  }));
+
+  // Frost particles (drift down, gently pushed away by the pointer)
+  (function () {
+    const cv = document.getElementById("frost"), cx = cv.getContext("2d");
+    let W, H, flakes = [], mx = -999, my = -999, meteors = [], nextMeteor = performance.now() + 2500;
+    function size() {
+      const d = Math.min(2, devicePixelRatio || 1);
+      W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0);
+      const n = Math.min(110, Math.round(W * H / 14000));
+      while (flakes.length < n) flakes.push({ x: Math.random() * W, y: Math.random() * H, r: .6 + Math.random() * 1.8,
+        v: .25 + Math.random() * .7, ph: Math.random() * 6.28, a: .25 + Math.random() * .55 });
+      flakes.length = n;
+    }
+    size(); addEventListener("resize", size);
+    addEventListener("pointermove", (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    function draw(t) {
+      cx.clearRect(0, 0, W, H);
+      if (t > nextMeteor) {
+        nextMeteor = t + 7000 + Math.random() * 9000;
+        const a = (18 + Math.random() * 14) * Math.PI / 180, dir = Math.random() < .5 ? 1 : -1;
+        meteors.push({ x: dir > 0 ? Math.random() * W * .6 : W - Math.random() * W * .6, y: Math.random() * H * .35,
+          vx: Math.cos(a) * dir * (11 + Math.random() * 5), vy: Math.sin(a) * (11 + Math.random() * 5), life: 0, len: 110 + Math.random() * 70 });
+      }
+      for (let i = meteors.length - 1; i >= 0; i--) {
+        const m = meteors[i]; m.x += m.vx; m.y += m.vy; m.life++;
+        const k = Math.hypot(m.vx, m.vy), tx = m.x - m.vx / k * m.len, ty = m.y - m.vy / k * m.len;
+        const al = Math.max(0, 1 - m.life / 70), g = cx.createLinearGradient(m.x, m.y, tx, ty);
+        g.addColorStop(0, "rgba(235,248,255," + al + ")"); g.addColorStop(1, "rgba(60,170,255,0)");
+        cx.shadowBlur = 0; cx.strokeStyle = g; cx.lineWidth = 2; cx.lineCap = "round";
+        cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(tx, ty); cx.stroke();
+        cx.beginPath(); cx.arc(m.x, m.y, 2, 0, 6.283); cx.fillStyle = "rgba(255,255,255," + al + ")"; cx.shadowColor = "#6cc4ff"; cx.shadowBlur = 10; cx.fill();
+        if (m.life > 70 || m.x < -200 || m.x > W + 200 || m.y > H + 200) meteors.splice(i, 1);
+      }
+      for (const f of flakes) {
+        {
+          f.y += f.v; f.x += Math.sin(t / 1800 + f.ph) * .35;
+          const dx = f.x - mx, dy = f.y - my, d2 = dx * dx + dy * dy;
+          if (d2 < 14400) { const k = (1 - Math.sqrt(d2) / 120) * 2.2, d = Math.sqrt(d2) || 1; f.x += dx / d * k; f.y += dy / d * k; }
+          if (f.y > H + 4) { f.y = -4; f.x = Math.random() * W; }
+          if (f.x < -4) f.x = W + 4; else if (f.x > W + 4) f.x = -4;
+        }
+        cx.beginPath(); cx.arc(f.x, f.y, f.r, 0, 6.283);
+        cx.fillStyle = "rgba(190,230,255," + f.a + ")"; cx.shadowColor = "#6cc4ff"; cx.shadowBlur = f.r * 4; cx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();
+
+  // Live Discord status. Discord's API only exposes presence to bots in a shared server, so this
+  // uses the free Lanyard service (members join discord.gg/lanyard once). Not tracked = no dot.
+  const sdot = {};
+  function paint(id, d) {
+    const c = cards[id]; if (!c) return;
+    const dot = c.querySelector(".dot"), act = c.querySelector(".act");
+    if (!d) { dot.hidden = true; act.textContent = ""; return; }
+    dot.hidden = false; dot.className = "dot " + d.discord_status;
+    dot.title = { online: "Online", idle: "Idle", dnd: "Do not disturb", offline: "Offline" }[d.discord_status] || "";
+    const a = (d.activities || []).find((x) => x.type !== 4), cs = (d.activities || []).find((x) => x.type === 4);
+    act.textContent = a ? ({ 0: "Playing ", 2: "Listening to ", 3: "Watching ", 5: "Competing in " }[a.type] || "") + a.name
+      : (cs && cs.state ? cs.state : "");
+  }
+  function presence() {
+    all.forEach((id) => fetch("https://api.lanyard.rest/v1/users/" + id)
+      .then((r) => r.ok ? r.json() : null).then((j) => paint(id, j && j.success ? j.data : null))
+      .catch(() => paint(id, null)));
+  }
+  presence(); setInterval(() => { if (!document.hidden) presence(); }, 30000);
+
+  // Paw-print cursor trail
+  if (matchMedia("(hover:hover)").matches) {
+    let lx = 0, ly = 0, side = 1;
+    addEventListener("pointermove", (e) => {
+      const dx = e.clientX - lx, dy = e.clientY - ly;
+      if (dx * dx + dy * dy < 2800) return;
+      const ang = Math.atan2(dy, dx) * 180 / Math.PI + 90; lx = e.clientX; ly = e.clientY; side = -side;
+      const p = document.createElement("div"); p.className = "paw";
+      const nx = -dy, ny = dx, m = Math.hypot(nx, ny) || 1;
+      p.style.left = (lx - 9 + nx / m * 7 * side) + "px"; p.style.top = (ly - 9 + ny / m * 7 * side) + "px";
+      p.style.setProperty("--r", "rotate(" + ang + "deg)"); p.style.transform = "rotate(" + ang + "deg)";
+      document.body.appendChild(p); setTimeout(() => p.remove(), 1350);
+    }, { passive: true });
+  }
+
 </script>
 </body>
 </html>
