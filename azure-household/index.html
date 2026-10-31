@@ -122,15 +122,8 @@
     background:radial-gradient(260px circle at var(--gx,50%) var(--gy,50%),rgba(80,200,255,.22),transparent 65%)}
   .card:hover::after,.city:hover::after,.ally:hover::after{opacity:1}
 
-  /* Presence */
   .av{position:relative;width:52px;height:52px;margin-top:-26px}
   .av .avatar{margin-top:0}
-  .dot{position:absolute;right:-3px;bottom:-1px;width:16px;height:16px;border-radius:50%;border:3px solid var(--card);background:#747f8d}
-  .dot.online{background:#3ba55d;box-shadow:0 0 8px #3ba55d}
-  .dot.idle{background:#faa81a}
-  .dot.dnd{background:#ed4245}
-  .act{color:var(--azure);font-size:.8rem;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .act:empty{display:none}
 
   /* Paw trail */
   .paw{position:fixed;z-index:50;width:18px;height:18px;pointer-events:none;opacity:.7;
@@ -343,7 +336,7 @@
       const a = document.createElement("a");
       a.className = "card"; a.href = "https://discord.com/users/" + id;
       a.target = "_blank"; a.rel = "noopener";
-      a.innerHTML = '<div class="banner"></div><div class="body"><div class="av"><img class="avatar" alt="" hidden><i class="dot" hidden></i></div><div class="name">Loading…</div><div class="handle">&nbsp;</div><div class="act"></div></div>';
+      a.innerHTML = '<div class="banner"></div><div class="body"><div class="av"><img class="avatar" alt="" hidden></div><div class="name">Loading…</div><div class="handle">&nbsp;</div></div>';
       grid.appendChild(a); cards[id] = a;
     });
     sec.append(h, grid); root.appendChild(sec);
@@ -398,7 +391,7 @@
     .then((d) => d.users.forEach(fill))
     .catch(() => all.forEach((id) => fill({ id, error: true })));
 
-  // ===== Extras: loader, frost, counters, glow, presence, paws =====
+  // ===== Extras: loader, frost, counters, glow, paws =====
 
   // Loading screen: logo fades in, then lifts once the page has loaded
   const loader = document.getElementById("loader");
@@ -478,26 +471,6 @@
     }
     requestAnimationFrame(draw);
   })();
-
-  // Live Discord status. Discord's API only exposes presence to bots in a shared server, so this
-  // uses the free Lanyard service (members join discord.gg/lanyard once). Not tracked = no dot.
-  const sdot = {};
-  function paint(id, d) {
-    const c = cards[id]; if (!c) return;
-    const dot = c.querySelector(".dot"), act = c.querySelector(".act");
-    if (!d) { dot.hidden = true; act.textContent = ""; return; }
-    dot.hidden = false; dot.className = "dot " + d.discord_status;
-    dot.title = { online: "Online", idle: "Idle", dnd: "Do not disturb", offline: "Offline" }[d.discord_status] || "";
-    const a = (d.activities || []).find((x) => x.type !== 4), cs = (d.activities || []).find((x) => x.type === 4);
-    act.textContent = a ? ({ 0: "Playing ", 2: "Listening to ", 3: "Watching ", 5: "Competing in " }[a.type] || "") + a.name
-      : (cs && cs.state ? cs.state : "");
-  }
-  function presence() {
-    all.forEach((id) => fetch("https://api.lanyard.rest/v1/users/" + id)
-      .then((r) => r.ok ? r.json() : null).then((j) => paint(id, j && j.success ? j.data : null))
-      .catch(() => paint(id, null)));
-  }
-  presence(); setInterval(() => { if (!document.hidden) presence(); }, 30000);
 
   // Paw-print cursor trail
   if (matchMedia("(hover:hover)").matches) {
