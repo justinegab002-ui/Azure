@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure Household</title>
+<meta name="description" content="Azure Household: the people behind the name.">
+<link rel="icon" href="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#030a17; --card:#09152a; --line:#14386b; --azure:#27a8ff;
+    --ice:#eaf5ff; --mute:#7f98bf; color-scheme:dark;
+    --display:"Chakra Petch","Bricolage Grotesque",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
+  body{
+    background:var(--bg); color:var(--ice); min-height:100vh; line-height:1.5;
+    font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  .brand,h1,h2{font-family:var(--display)}
+  a:focus-visible,button:focus-visible{outline:3px solid rgba(39,168,255,.6);outline-offset:3px}
+
+  /* Navigation */
+  .nav{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;
+    padding:10px 24px;background:rgba(3,10,23,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:10px;color:var(--ice);text-decoration:none;font-weight:800;letter-spacing:-.01em}
+  .brand img{width:38px;height:38px;border-radius:50%}
+  @media (max-width:520px){.hh{display:none}}
+  .links{display:flex;gap:6px}
+  .links a{color:var(--mute);text-decoration:none;font-weight:700;padding:8px 14px;border-radius:999px;transition:color .15s,background .15s}
+  .links a:hover{color:var(--ice)}
+  .links a.active{color:var(--ice);background:rgba(39,168,255,.16)}
+
+  /* Home */
+  .hero{min-height:calc(100vh - 59px);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:48px 24px 72px;
+    background:radial-gradient(ellipse 70% 55% at 50% 38%,rgba(39,168,255,.2),transparent 70%)}
+  .stage{width:min(400px,78vw);aspect-ratio:1;perspective:900px;cursor:pointer;touch-action:pan-y;
+    -webkit-tap-highlight-color:transparent;position:relative;border-radius:50%}
+  .stage::before{content:"";position:absolute;inset:-12%;border-radius:50%;z-index:0;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(56,200,255,.55),transparent 60%);
+    opacity:.45;transition:opacity .3s}
+  .stage:hover::before{opacity:.95}
+  .logo{position:relative;z-index:1;width:100%;height:100%;border-radius:50%;display:block;
+    transition:transform .15s ease-out;box-shadow:0 0 60px rgba(39,168,255,.35)}
+  .stage.pulse .logo{animation:pulse .7s ease-out}
+  @keyframes pulse{0%{filter:brightness(1)}30%{filter:brightness(1.7) saturate(1.3);transform:scale(1.09)}100%{filter:brightness(1)}}
+  h1{font-size:clamp(2.4rem,8vw,4.6rem);line-height:1;font-weight:700;letter-spacing:.01em;margin-top:36px}
+  .hero p{color:var(--mute);font-size:1.1rem;margin:20px auto 0;max-width:54ch}
+  .cta{display:inline-block;margin-top:28px;padding:12px 26px;border-radius:999px;background:var(--azure);color:#02101f;
+    font-weight:800;text-decoration:none;transition:background .15s}
+  .cta:hover{background:#6cc4ff}
+
+  /* Members */
+  #members{padding:72px 0 24px}
+  .title{text-align:center;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:700;letter-spacing:.01em;margin-bottom:8px}
+  .sub{text-align:center;color:var(--mute);margin-bottom:24px}
+  section.group{padding:28px 24px}
+  h2{text-align:center;font-size:1.15rem;font-weight:700;color:var(--azure);margin-bottom:22px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,240px);gap:18px;justify-content:center;max-width:1100px;margin:0 auto}
+  .card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .15s}
+  .card:hover,.card:focus-visible{border-color:var(--azure);outline:none}
+  .card:focus-visible{box-shadow:0 0 0 3px rgba(39,168,255,.45)}
+  .banner{height:66px;background:linear-gradient(135deg,#1b6fd1,#08142b);background-size:cover;background-position:center}
+  .body{padding:0 14px 16px}
+  .avatar{display:block;width:52px;height:52px;margin-top:-26px;border-radius:50%;border:3px solid var(--card);background:#14233f;object-fit:cover}
+  .name{font-weight:700;margin-top:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .handle{color:var(--mute);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .title{color:var(--ice)}
+  #cities{padding:72px 24px 24px}
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fit,240px);gap:18px;justify-content:center;max-width:780px;margin:0 auto}
+  .city{--c:#27a8ff;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 16px 20px;text-align:center;transition:border-color .2s,box-shadow .2s}
+  .city:hover{border-color:var(--c);box-shadow:0 0 28px -6px var(--c)}
+  .city img{display:block;width:128px;height:128px;margin:0 auto 16px;border-radius:24px;object-fit:cover}
+  .city h3{font-size:1.05rem;font-weight:700;line-height:1.3}
+  #allies{padding:72px 24px 24px}
+  .ally{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--card);transition:border-color .2s,box-shadow .2s}
+  .ally:hover{border-color:var(--azure);box-shadow:0 0 28px -6px var(--azure)}
+  .ally img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+  .ally figcaption{padding:12px 14px;text-align:center;border-top:1px solid var(--line);font-family:var(--display);font-weight:700;font-size:1rem;line-height:1.25}
+  #agrid{max-width:520px}
+  @media (max-width:520px){.nav{padding:10px 12px}.links{gap:2px}.links a{padding:8px 10px;font-size:.92rem}}
+  @media (max-width:420px){.brand{font-size:0}}
+  .progress{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--azure);box-shadow:0 0 8px var(--azure)}
+  .js .rv{opacity:0;translate:0 16px;will-change:transform;transition:opacity .5s ease,translate .5s ease,transform .15s ease-out,border-color .2s,box-shadow .2s}
+  .js .rv.in{opacity:1;translate:0 0}
+  .top{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:44px;height:44px;border-radius:50%;border:1px solid var(--line);
+    background:rgba(9,21,42,.92);color:var(--ice);font-size:1.2rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s,border-color .2s}
+  .top.show{opacity:1;pointer-events:auto}
+  .top:hover{border-color:var(--azure)}
+  footer{text-align:center;color:var(--mute);font-size:.85rem;padding:48px 24px 64px}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .logo{transition:none}
+    .stage.pulse .logo{animation:none}
+    .js .rv{opacity:1;translate:none}
+  }
+</style>
+<script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <a class="brand" href="#home"><img src="logo.jpg" alt=""><span>Azure<span class="hh"> Household</span></span></a>
+  <div class="links">
+    <a href="#home" data-s="home" class="active">Home</a>
+    <a href="#members" data-s="members">Members</a>
+    <a href="#cities" data-s="cities">Cities</a>
+    <a href="#allies" data-s="allies">Allies</a>
+  </div>
+<div class="progress" id="progress"></div>
+</nav>
+
+<header class="hero" id="home">
+  <div class="stage" id="stage" title="Tap the logo">
+    <img class="logo" id="logo" src="logo.jpg" alt="Azure logo: an ice-blue wolf wearing a crown above the word Azure" width="640" height="640">
+  </div>
+  <h1>Azure Household</h1>
+  <p>Azure Household is a family united by loyalty, respect, and a shared commitment to one another. Established by our parents and strengthened by each generation that followed, we hold ourselves to a high standard of integrity, both within our ranks and in our dealings with others.</p>
+  <p>We take great pride in the bonds we have built, in the cities in which we play, and in the allied families who stand beside us. In times of challenge and in times of celebration alike, we remain steadfast in our loyalty, and we welcome all who share these values.</p>
+  <a class="cta" href="#members">Meet the members</a>
+</header>
+
+<main id="members">
+  <h2 class="title" style="color:var(--ice)">Members</h2>
+  <p class="sub">Tap a card to open their Discord profile.</p>
+  <div id="groups"></div>
+</main>
+
+<section id="cities">
+  <h2 class="title">Cities</h2>
+  <p class="sub">The cities we play on.</p>
+  <div class="cgrid" id="cgrid"></div>
+</section>
+
+<section id="allies">
+  <h2 class="title">Allies</h2>
+  <p class="sub">The families we stand with.</p>
+  <div class="cgrid" id="agrid"></div>
+</section>
+
+<footer>Azure Household © <span id="year"></span></footer>
+<button class="top" id="top" type="button" aria-label="Back to top">↑</button>
+
+<script>
+  // ---- EDIT HERE: add or remove Discord User IDs, or rename the sections ----
+  const SECTIONS = [
+    { title: "Parents", ids: [
+      "716970749864312872",
+      "586402194820169729"
+    ]},
+    { title: "1st generation", ids: [
+      "807097814802628619",
+      "958412025413927022",
+      "538329195311267843",
+      "750778371029598258",
+      "1127857513073750057",
+      "1270460899681108093",
+      "1202870102526005248",
+      "1362652927357091921"
+    ]}
+  ];
+  // ---------------------------------------------------------------------------
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Interactive logo: tilts toward the pointer, glow follows it, click or tap to pulse
+  const stage = document.getElementById("stage"), logo = document.getElementById("logo");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  stage.addEventListener("pointermove", (e) => {
+    const r = stage.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    stage.style.setProperty("--mx", x * 100 + "%"); stage.style.setProperty("--my", y * 100 + "%");
+    if (!reduce) logo.style.transform = "rotateY(" + (x - .5) * 22 + "deg) rotateX(" + (.5 - y) * 22 + "deg) scale(1.04)";
+  });
+  stage.addEventListener("pointerleave", () => { logo.style.transform = ""; });
+  stage.addEventListener("click", () => {
+    stage.classList.remove("pulse"); void stage.offsetWidth; stage.classList.add("pulse");
+  });
+
+  // Highlight the nav link for the section in view (based on scroll position)
+  const links = document.querySelectorAll(".links a");
+  const secs = ["home", "members", "cities", "allies"].map((id) => document.getElementById(id));
+  let pin = null; // the link just clicked stays highlighted until the person scrolls on their own
+  function setActive() {
+    let cur = pin;
+    if (!cur) {
+      cur = secs[0].id;
+      const y = scrollY + 120;
+      secs.forEach((sec) => { if (sec.offsetTop <= y) cur = sec.id; });
+      if (scrollY + innerHeight >= document.documentElement.scrollHeight - 2) cur = secs[secs.length - 1].id;
+    }
+    links.forEach((l) => l.classList.toggle("active", l.dataset.s === cur));
+  }
+  links.forEach((l) => l.addEventListener("click", () => { pin = l.dataset.s; setActive(); }));
+  ["wheel", "touchmove", "keydown"].forEach((ev) => addEventListener(ev, () => { pin = null; }, { passive: true }));
+
+  // Cities (icons live in the cities/ folder)
+  const CITIES = [
+    { name: "Crimson City", img: "cities/crimson.webp", c: "#d7263d" },
+    { name: "Aurelion City", img: "cities/aurelion.webp", c: "#3f78d6" },
+    { name: "New Era", img: "cities/newera.webp", c: "#3d5bff" },
+    { name: "Monarch City", img: "cities/monarch.webp", c: "#d9a233" },
+    { name: "NXGN", img: "cities/nxgn.webp", c: "#a43fd6" },
+    { name: "Prestigious Badman Billionaire", img: "cities/pbb.webp", c: "#3fae8a" }
+  ];
+  const cg = document.getElementById("cgrid");
+  CITIES.forEach((ct) => {
+    const d = document.createElement("div"); d.className = "city"; d.style.setProperty("--c", ct.c);
+    const i = document.createElement("img"); i.src = ct.img; i.alt = ct.name + " icon"; i.width = 128; i.height = 128; i.loading = "lazy";
+    const h = document.createElement("h3"); h.textContent = ct.name;
+    d.append(i, h); cg.appendChild(d);
+  });
+
+  // Allies (logos live in the allies/ folder; the name sits under each logo)
+  const ALLIES = [
+    { name: "Familia de Lason", img: "allies/lason.webp" },
+    { name: "Carrington Family", img: "allies/carrington.webp" },
+    { name: "Himari", img: "allies/himari.webp" },
+    { name: "MontClair", img: "allies/montclair.webp" }
+  ];
+  const ag = document.getElementById("agrid");
+  ALLIES.forEach((al) => {
+    const f = document.createElement("figure"); f.className = "ally";
+    const i = document.createElement("img"); i.src = al.img; i.alt = al.name + " logo"; i.loading = "lazy";
+    const c = document.createElement("figcaption"); c.textContent = al.name;
+    f.append(i, c); ag.appendChild(f);
+  });
+
+  // Member cards
+  const root = document.getElementById("groups");
+  const cards = {};
+  SECTIONS.forEach(({ title, ids }) => {
+    const sec = document.createElement("section"); sec.className = "group";
+    const h = document.createElement("h2"); h.textContent = title;
+    const grid = document.createElement("div"); grid.className = "grid";
+    [...new Set(ids)].forEach((id) => {
+      const a = document.createElement("a");
+      a.className = "card"; a.href = "https://discord.com/users/" + id;
+      a.target = "_blank"; a.rel = "noopener";
+      a.innerHTML = '<div class="banner"></div><div class="body"><img class="avatar" alt="" hidden><div class="name">Loading…</div><div class="handle">&nbsp;</div></div>';
+      grid.appendChild(a); cards[id] = a;
+    });
+    sec.append(h, grid); root.appendChild(sec);
+  });
+
+  // Interactions: scroll progress, back to top, reveal on scroll, hover tilt
+  const bar = document.getElementById("progress"), topBtn = document.getElementById("top");
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
+    topBtn.classList.toggle("show", scrollY > 600);
+    setActive();
+  };
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  topBtn.addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }));
+
+  const tiles = document.querySelectorAll(".card,.city,.ally");
+  const rio = new IntersectionObserver((es) => {
+    let n = 0;
+    es.forEach((en) => {
+      if (!en.isIntersecting) return;
+      const el = en.target; el.style.transitionDelay = n++ * 70 + "ms"; el.classList.add("in");
+      setTimeout(() => { el.style.transitionDelay = ""; }, 900); rio.unobserve(el);
+    });
+  }, { threshold: .1 });
+  tiles.forEach((el) => { el.classList.add("rv"); rio.observe(el); });
+
+  if (!reduce && matchMedia("(hover:hover)").matches) {
+    tiles.forEach((el) => {
+      el.addEventListener("pointermove", (e) => {
+        const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        el.style.transform = "perspective(700px) rotateY(" + x * 10 + "deg) rotateX(" + -y * 10 + "deg) translateY(-3px)";
+      });
+      el.addEventListener("pointerleave", () => { el.style.transform = ""; });
+    });
+  }
+
+  function fill(u) {
+    const c = cards[u.id]; if (!c) return;
+    const name = c.querySelector(".name"), handle = c.querySelector(".handle");
+    if (u.error) { name.textContent = "Profile unavailable"; handle.textContent = u.id; return; }
+    const banner = c.querySelector(".banner"), img = c.querySelector(".avatar");
+    if (u.banner) banner.style.backgroundImage = "url('" + u.banner + "')";
+    else if (u.color) banner.style.background = "linear-gradient(135deg," + u.color + ",#08142b)";
+    img.src = u.avatar; img.hidden = false;
+    name.textContent = u.name; handle.textContent = "@" + u.username;
+  }
+
+  const all = Object.keys(cards);
+  fetch("/.netlify/functions/discord?ids=" + all.join(","))
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((d) => d.users.forEach(fill))
+    .catch(() => all.forEach((id) => fill({ id, error: true })));
+</script>
+</body>
+</html>
