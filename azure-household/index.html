@@ -149,6 +149,22 @@
   @keyframes mist1{from{transform:translateX(-12%)}to{transform:translateX(12%)}}
   @keyframes mist2{from{transform:translateX(14%) scaleY(1.2)}to{transform:translateX(-14%) scaleY(.9)}}
 
+  /* Music player */
+  .music{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:6px;
+    padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line);background:rgba(9,21,42,.92);backdrop-filter:blur(8px);box-shadow:0 0 24px -8px var(--azure)}
+  .music button{width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--ice);font-size:1.05rem;cursor:pointer;display:grid;place-items:center}
+  .music button:hover{background:rgba(39,168,255,.18)}
+  .music .pp{background:var(--azure);color:#02101f;font-size:.95rem}
+  .music .pp:hover{background:#6cc4ff}
+  .music input{width:84px;accent-color:var(--azure);cursor:pointer}
+  .music .eq{display:flex;align-items:flex-end;gap:2px;height:16px;margin:0 2px}
+  .music .eq i{width:3px;height:30%;background:var(--azure);border-radius:2px}
+  .music.on .eq i{animation:eq .9s ease-in-out infinite}
+  .music.on .eq i:nth-child(2){animation-delay:-.3s}.music.on .eq i:nth-child(3){animation-delay:-.6s}
+  @keyframes eq{50%{height:100%}}
+  .music .lbl{color:var(--mute);font-size:.78rem;font-weight:700;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis}
+  @media (max-width:560px){.music input,.music .lbl{display:none}.music{padding-right:6px}}
+
   @media (prefers-reduced-motion:reduce){
     .logo{transition:none}
     .stage.pulse .logo{animation:none}
@@ -209,6 +225,14 @@
 </section>
 
 <footer>Azure Household © <span id="year"></span></footer>
+<div class="music" id="music" role="group" aria-label="Background music">
+  <button class="pp" id="mpp" type="button" aria-label="Play music" title="Play / pause">▶</button>
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="lbl">Azure, Pamilya Ko</span>
+  <button id="mmute" type="button" aria-label="Mute" title="Mute / unmute">🔊</button>
+  <input id="mvol" type="range" min="0" max="100" value="35" aria-label="Volume">
+  <audio id="bgm" src="music/azure-pamilya-ko.mp3" loop preload="auto"></audio>
+</div>
 <button class="top" id="top" type="button" aria-label="Back to top">↑</button>
 
 <script>
@@ -470,6 +494,49 @@
       requestAnimationFrame(draw);
     }
     requestAnimationFrame(draw);
+  })();
+
+    // Background music: starts by itself when the browser allows it, otherwise on the visitor's first tap/click
+  (function () {
+    const au = document.getElementById("bgm"), box = document.getElementById("music"), pp = document.getElementById("mpp");
+    const mm = document.getElementById("mmute"), vol = document.getElementById("mvol");
+    const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+    const set = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+    let wantOn = get("azure-music", "on") !== "off";
+    au.volume = Math.min(1, Math.max(0, +get("azure-vol", "35") / 100)); vol.value = Math.round(au.volume * 100);
+    au.muted = get("azure-muted", "0") === "1";
+    function ui() {
+      const playing = !au.paused;
+      box.classList.toggle("on", playing && !au.muted);
+      pp.textContent = playing ? "❚❚" : "▶"; pp.setAttribute("aria-label", playing ? "Pause music" : "Play music");
+      mm.textContent = au.muted || au.volume === 0 ? "🔇" : au.volume < .5 ? "🔉" : "🔊";
+      mm.setAttribute("aria-label", au.muted ? "Unmute" : "Mute");
+    }
+    function start() { return au.play().then(ui).catch(() => false); }
+    let armed = false;
+    function arm() {
+      if (armed || !wantOn) return; armed = true;
+      const go = (e) => {
+        if (e.target.closest && e.target.closest("#music")) return;
+        ["pointerdown", "keydown", "touchstart"].forEach((ev) => removeEventListener(ev, go, true));
+        if (wantOn && au.paused) start();
+      };
+      ["pointerdown", "keydown", "touchstart"].forEach((ev) => addEventListener(ev, go, true));
+    }
+    pp.addEventListener("click", () => {
+      if (au.paused) { wantOn = true; set("azure-music", "on"); start(); } else { wantOn = false; set("azure-music", "off"); au.pause(); ui(); }
+    });
+    mm.addEventListener("click", () => {
+      au.muted = !au.muted; if (!au.muted && au.volume === 0) { au.volume = .35; vol.value = 35; }
+      set("azure-muted", au.muted ? "1" : "0"); ui();
+    });
+    vol.addEventListener("input", () => {
+      au.volume = vol.value / 100; if (au.muted && au.volume > 0) { au.muted = false; set("azure-muted", "0"); }
+      set("azure-vol", vol.value); ui();
+    });
+    au.addEventListener("play", ui); au.addEventListener("pause", ui);
+    ui();
+    if (wantOn) start().then((ok) => { if (ok === false) arm(); }); else ui();
   })();
 
   // Paw-print cursor trail
