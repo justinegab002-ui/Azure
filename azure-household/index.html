@@ -165,6 +165,20 @@
   .music .lbl{color:var(--mute);font-size:.78rem;font-weight:700;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis}
   @media (max-width:560px){.music input,.music .lbl{display:none}.music{padding-right:6px}}
 
+
+  /* Click to enter */
+  .gate{display:none}
+  .js .gate{display:grid;place-items:center;align-content:center;gap:18px;position:fixed;inset:0;z-index:200;padding:24px;text-align:center;
+    background:radial-gradient(ellipse at 50% 35%,#0a2a55 0%,var(--bg) 70%);transition:opacity .6s ease,visibility .6s}
+  .gate.done{opacity:0;visibility:hidden;pointer-events:none}
+  .gate img{width:150px;height:150px;border-radius:50%;box-shadow:0 0 80px rgba(39,168,255,.55);animation:ldglow 2s ease-in-out infinite}
+  .gate h2{font-size:clamp(1.6rem,5vw,2.4rem);letter-spacing:-.01em}
+  .gate p{color:var(--mute);font-size:.95rem;max-width:30ch}
+  .gate button{margin-top:6px;padding:14px 34px;border-radius:999px;border:0;background:var(--azure);color:#02101f;font:800 1.05rem/1 var(--display);
+    letter-spacing:.04em;cursor:pointer;box-shadow:0 0 30px -4px var(--azure);transition:background .15s,transform .15s}
+  .gate button:hover{background:#6cc4ff;transform:translateY(-2px)}
+  html.gated,html.gated body{overflow:hidden}
+
   @media (prefers-reduced-motion:reduce){
     .logo{transition:none}
     .stage.pulse .logo{animation:none}
@@ -172,9 +186,14 @@
     .loader img,.loader .bar i{animation:none}
   }
 </style>
-<script>document.documentElement.classList.add("js")</script>
+<script>document.documentElement.classList.add("js","gated")</script>
 </head>
 <body>
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Welcome to Azure Household">
+  <img src="logo.jpg" alt="">
+  <h2>Azure Household</h2>
+  <button type="button" id="enter">Press to Enter</button>
+</div>
 <div class="loader" id="loader" aria-hidden="true"><img src="logo.jpg" alt=""><div class="bar"><i></i></div></div>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <canvas id="frost" aria-hidden="true"></canvas>
@@ -537,6 +556,16 @@
     au.addEventListener("play", ui); au.addEventListener("pause", ui);
     ui();
     if (wantOn) start().then((ok) => { if (ok === false) arm(); }); else ui();
+
+    // Click-to-enter gate: the click counts as the visitor's interaction, so the browser lets the music play
+    const gate = document.getElementById("gate"), enter = document.getElementById("enter");
+    enter.addEventListener("click", () => {
+      if (wantOn) start();
+      gate.classList.add("done");
+      document.documentElement.classList.remove("gated");
+      setTimeout(() => gate.remove(), 700);
+    });
+    enter.focus({ preventScroll: true });
   })();
 
   // Paw-print cursor trail
